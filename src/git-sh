@@ -1,0 +1,61 @@
+#!/bin/bash
+
+PROMPT='git-sh> '
+TOKEN='::'
+
+ALIAS=( 
+
+" v  :: git --version"
+" br :: git branch"
+" ll :: git log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(white)%h  %C(bold green)%ar  %C(white)%s' \$1"
+
+)
+
+_get_hashmap(){
+	local line
+
+	for i in "${ALIAS[@]}" ; do
+		local K=${i%%$TOKEN*}
+		local V=${i##*$TOKEN}		
+
+		if [ $K = $1 ]; then
+			line=$V
+			break
+		fi
+	done
+	echo $line
+}
+
+
+_line_to_line_eval(){
+	
+		local line_a=($@)
+		local key=${line_a[0]}
+
+		line=$(_get_hashmap $key)
+	
+		# reemplazar los parametros $1 $2 $3 .. por los parametros de entrada del shell
+		for (( i=1; i<${#line_a}; i++ )); do			
+			line=${line/'$'$i/${line_a[$i]}}
+		done
+}
+
+_main_(){
+	while true; do					
+		read -erp "$PROMPT" line
+
+		if [[ -z $line ]]; then
+			echo "man"
+		else
+			_line_to_line_eval  $line
+			eval $line
+		fi
+		
+	done
+}
+
+#
+# main
+#
+
+_main_
