@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROMPT='git-sh> '
+PROMPT='\e[1;36mgit-sh> \e[1;32m'
 TOKEN='::'
 
 ALIAS=( 
@@ -41,16 +41,25 @@ _line_to_line_eval(){
 }
 
 _main_(){
-	while true; do					
-		read -erp "$PROMPT" line
+	while true; do		
 
-		if [[ -z $line ]]; then
-			echo "man"
-		else
-			_line_to_line_eval  $line
-			eval $line
-		fi
-		
+	    echo -ne $PROMPT
+		read -er line
+
+		case $line in
+			'' | 'man') 
+				echo "man"
+			;;
+
+			'exit' | 'q') 
+				break
+			;;
+
+			*)
+				_line_to_line_eval  $line
+				eval $line
+			;;
+		esac
 	done
 }
 
