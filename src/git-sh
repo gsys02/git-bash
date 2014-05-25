@@ -11,6 +11,7 @@ ALIAS=(
 
 )
 
+
 _get_hashmap(){
 	local line
 
